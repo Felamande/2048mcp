@@ -77,8 +77,8 @@ def move(direction):
                          # Trigger GUI update to show final state
                          trigger_gui_update()
                     else:
-                        result_status = "fail"
-                        error_message = "Move did not change the board state"
+                        result_status = "ok"
+                        error_message = "but your move did not change the board"
                         # This isn't strictly an error, but indicates no change
                         # status_code = 200 or maybe 400 depending on desired API behavior
             except Exception as e:
@@ -108,6 +108,34 @@ def reset_game():
         trigger_gui_update() # Update GUI to show the new board
     return jsonify({"result": "ok", "message": "Game reset successfully"})
 
+@app.route('/try_move/<direction>', methods=['POST'])
+def try_move(direction):
+    """Simulates a move in the specified direction without affecting the actual game state."""
+    valid_directions = ['up', 'down', 'left', 'right']
+    if direction not in valid_directions:
+        return jsonify({"result": "fail", "error": "Invalid direction"}), 400
+
+    with game_lock:
+        # Use the try_move method to simulate the move without changing the game state
+        result = game_instance.try_move(direction)
+        
+    response = {
+        "game_result": "ok" if result["valid"] else "fail",
+        "simulated_status": {
+            "board": result["board"],
+            "score": result["score"],
+            "game_over": result["game_over"],
+            "size": game_instance.size
+        }
+    }
+    
+    if not result["valid"]:
+        if result["game_over"]:
+            response["error"] = "Game over - no more moves possible"
+        else:
+            response["error"] = "Move would not change the board"
+    
+    return jsonify(response)
 
 # --- Flask App Runner ---
 # Note: This part is typically run from a main script, not directly here

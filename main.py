@@ -28,6 +28,7 @@ def main():
     print("API Endpoints:")
     print("  GET /status")
     print("  POST /move/{up|down|left|right}")
+    print("  POST /try_move/{up|down|left|right}")
     print("  POST /reset")
 
 

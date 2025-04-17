@@ -154,6 +154,36 @@ class GameLogic:
 
         return False
 
+    def try_move(self, direction):
+        """
+        Simulates a move in the specified direction without changing the actual game state.
+        Returns a dictionary with the simulated board state and whether the move was valid.
+        """
+        if self.game_over:
+            return {
+                "valid": False,
+                "board": copy.deepcopy(self.board),
+                "score": self.score,
+                "game_over": self.game_over
+            }
+
+        # Create a deep copy of the current game state
+        temp_game = GameLogic(self.size)
+        temp_game.board = copy.deepcopy(self.board)
+        temp_game.score = self.score
+        temp_game.game_over = self.game_over
+
+        # Perform the move on the temporary game state
+        moved = temp_game.move(direction)
+
+        # Return the simulated result
+        return {
+            "valid": moved,
+            "board": temp_game.board,
+            "score": temp_game.score,
+            "game_over": temp_game.game_over
+        }
+
 # Example Usage (for testing)
 if __name__ == "__main__":
     game = GameLogic()
