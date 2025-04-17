@@ -7,7 +7,6 @@ This project provides a GUI-based 2048 game with a RESTful API, along with an MC
 - **GUI Game**: A visual implementation of the 2048 game built with Tkinter
 - **RESTful API**: A Flask-based API to interact with the game
 - **MCP Server**: A fastmcp-based server that exposes standardized endpoints for AI control
-- **AI Agent**: A simple example AI that plays the game using heuristics
 
 ## Requirements
 
@@ -48,12 +47,11 @@ To start the MCP server for AI control:
 
 ```json
 "mcpServers": {
-    "nRgAXoPQJ-znQvErJukC7": {
+    "2048_game": {
       "name": "2048 game",
       "type": "stdio",
       "description": "2048 game control mcp",
       "isActive": true,
-      "registryUrl": "https://pypi.tuna.tsinghua.edu.cn/simple",
       "command": "uv",
       "args": [
         "--directory",
