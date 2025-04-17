@@ -7,5 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=2.2.0",
     "flask>=3.1.0",
+    "nuitka>=2.6.9",
     "requests>=2.32.3",
 ]
