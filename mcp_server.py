@@ -11,30 +11,31 @@ BASE_API = "http://127.0.0.1:5000"
 def move(direction:str)-> str:
     rsp = requests.post(f"{BASE_API}/move/{direction}")
     if rsp.status_code == 200:
+        jsonrsp['request_result'] = 200
         return json.dumps(rsp.json())
     else:
         jsonrsp = rsp.json()
-        jsonrsp['result'] = f"fail with http {rsp.status_code}"
+        jsonrsp['request_result'] = f"fail with http {rsp.status_code}"
         return json.dumps(jsonrsp)
 
 @mcp.tool()
 def moveup() -> str:
-    """move up a 2048 game's direction """
+    """move up a 2048 game's direction and get current status"""
     return move('up')
 
 @mcp.tool()
 def movedown() -> str:
-    """move down a 2048 game's direction"""
+    """move down a 2048 game's direction and get current status"""
     return move('down')
 
 @mcp.tool()
 def moveleft() -> str:
-    """move left a 2048 game's direction"""
+    """move left a 2048 game's direction and get current status"""
     return move('left')
 
 @mcp.tool()
 def moveright() -> str:
-    """move right a 2048 game's direction"""
+    """move right a 2048 game's direction and get current status"""
     return move('right')
     
 @mcp.tool()
@@ -43,12 +44,26 @@ def get_status() -> str:
     rsp = requests.get(f"{BASE_API}/status")
     if rsp.status_code == 200:
         jsonrsp = rsp.json()
-        jsonrsp['result'] = f"ok"
+        jsonrsp['request_result'] = 200
         return json.dumps(jsonrsp)
     else:
         jsonrsp = rsp.json()
-        jsonrsp['result'] = f"fail with http {rsp.status_code}"
+        jsonrsp['request_result'] = f"fail with http {rsp.status_code}"
         return json.dumps(jsonrsp)
-    
+
+@mcp.tool()
+def reset_game() -> str:
+    """reset 2048 game status"""
+    rsp = requests.get(f"{BASE_API}/reset")
+    if rsp.status_code == 200:
+        jsonrsp = rsp.json()
+        jsonrsp['request_result'] = 200
+        return json.dumps(jsonrsp)
+    else:
+        jsonrsp = rsp.json()
+        jsonrsp['request_result'] = f"fail with http {rsp.status_code}"
+        return json.dumps(jsonrsp)
+
+
 if __name__ == "__main__":
     mcp.run()

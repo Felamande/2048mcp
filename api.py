@@ -91,7 +91,7 @@ def move(direction):
         current_status = game_instance.get_status()
 
     response = {
-        "result": result_status,
+        "game_result": result_status,
         "current_status": current_status
     }
     if error_message:
