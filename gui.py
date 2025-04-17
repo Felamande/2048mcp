@@ -63,6 +63,11 @@ class GameGUI(tk.Frame):
             512: ('#f9f6f2', '#edc850'),
             1024: ('#f9f6f2', '#edc53f'),
             2048: ('#f9f6f2', '#edc22e'),
+            # Add colors for higher tiles
+            4096: ('#f9f6f2', '#60d9f0'), # Light Blue
+            8192: ('#f9f6f2', '#8a5ff0'), # Purple
+            16384: ('#f9f6f2', '#5ff08a'), # Green
+            32768: ('#f9f6f2', '#f05f5f'), # Red
         }
         # Default for higher values
         default_color = ('#f9f6f2', '#3c3a32')
