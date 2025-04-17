@@ -21,8 +21,7 @@ def set_gui_update_callback(callback):
 
 def trigger_gui_update():
     """Calls the registered GUI update callback if it exists."""
-    # This is now handled by game_manager when setting/resetting instance
-    pass
+    game_manager.trigger_gui_update()
 
 # --- API Endpoints ---
 
@@ -55,13 +54,16 @@ def move(direction):
                 moved = game_instance.move(direction)
                 if moved:
                     result_status = "ok"
-                    # The GUI update is now triggered through game_manager
+                    # Explicitly trigger GUI update
+                    game_manager.trigger_gui_update()
                 else:
                     # Check if the game is over *after* the move attempt
                     if game_instance.game_over:
                          result_status = "fail"
                          error_message = "Game over - no more moves possible"
                          status_code = 400 # Game ended
+                         # Explicitly trigger GUI update to show final state
+                         game_manager.trigger_gui_update()
                     else:
                         result_status = "ok"
                         error_message = "but your move did not change the board"

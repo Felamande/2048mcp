@@ -17,8 +17,7 @@ def set_instance(new_instance):
     _game_instance = new_instance
     
     # Trigger GUI update if callback is set
-    if _gui_update_callback:
-        _gui_update_callback(_game_instance.get_status())
+    trigger_gui_update()
 
 def reset_instance():
     """Resets the game by creating a new GameLogic instance."""
@@ -27,4 +26,9 @@ def reset_instance():
 def set_gui_update_callback(callback):
     """Sets the function to call when the game state changes."""
     global _gui_update_callback
-    _gui_update_callback = callback 
+    _gui_update_callback = callback
+
+def trigger_gui_update():
+    """Triggers a GUI update with the current game state."""
+    if _gui_update_callback:
+        _gui_update_callback(_game_instance.get_status()) 

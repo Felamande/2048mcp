@@ -101,7 +101,9 @@ class GameGUI(tk.Frame):
             moved = self.game.move('right')
 
         if moved:
-            self.update_grid()
+            # Instead of directly updating the grid, trigger update through manager
+            # This ensures consistency and notifies other clients
+            game_manager.trigger_gui_update()
             if self.game.game_over:
                 self.show_game_over()
 
