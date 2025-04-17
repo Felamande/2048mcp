@@ -87,7 +87,13 @@ def move(direction):
                 status_code = 500
                 print(f"Error during move '{direction}': {e}") # Log internal errors
 
-    response = {"result": result_status}
+        # Get current game status to include in response
+        current_status = game_instance.get_status()
+
+    response = {
+        "result": result_status,
+        "current_status": current_status
+    }
     if error_message:
         response["error"] = error_message
 
