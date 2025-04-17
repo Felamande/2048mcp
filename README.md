@@ -46,27 +46,28 @@ This will:
 
 To start the MCP server for AI control:
 
-```
-python mcp_server.py
+```json
+"mcpServers": {
+    "nRgAXoPQJ-znQvErJukC7": {
+      "name": "2048 game",
+      "type": "stdio",
+      "description": "2048 game control mcp",
+      "isActive": true,
+      "registryUrl": "https://pypi.tuna.tsinghua.edu.cn/simple",
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/directory/to/your/python_script",
+        "run",
+        "mcp_server.py"
+      ]
+    }
+}
 ```
 
 This will:
-- Start the MCP server on port 8000
-- Connect to the game's API (make sure the game is already running)
-- Expose standardized endpoints for AI control
+- enable MCP server
 
-### Running the Example AI Agent
-
-To run the example AI agent that plays the game:
-
-```
-python ai_agent.py
-```
-
-This will:
-- Connect to the MCP server (make sure it's running)
-- Begin playing the game autonomously
-- Display move decisions and game state in the console
 
 ## API Endpoints
 
@@ -76,21 +77,6 @@ This will:
 - `POST /move/{direction}`: Makes a move in the specified direction ('up', 'down', 'left', 'right')
 - `POST /reset`: Resets the game to its initial state
 
-### MCP Server API (Port 8000)
-
-- `GET /observations`: Returns the current game state in a standardized format
-- `POST /actions`: Sends actions to the game (format: `{"move": "up|down|left|right"}`)
-- `GET /rewards`: Returns current rewards for reinforcement learning
-- `GET /terminal`: Checks if the game is in a terminal state
-- `POST /reset`: Resets the game
-
-## Creating Your Own AI
-
-You can create your own AI agent by:
-
-1. Using the example `ai_agent.py` as a template
-2. Implementing your own decision-making logic in the `choose_move` method
-3. Using reinforcement learning or more sophisticated algorithms for better results
 
 ## License
 

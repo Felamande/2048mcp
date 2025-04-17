@@ -33,6 +33,16 @@ class GameGUI(tk.Frame):
         # Score display
         self.score_label = tk.Label(self, text=f"Score: {self.game.score}", font=('Helvetica', 18, 'bold'))
         self.score_label.place(relx=0.5, y=40, anchor='center') # Place score above the grid
+        
+        # Reset button
+        self.reset_button = tk.Button(self, text="Reset Game", font=('Helvetica', 12, 'bold'), 
+                                      bg='#8f7a66', fg='white', command=self.reset_game)
+        self.reset_button.grid(pady=(10, 0))
+
+    def reset_game(self):
+        """Resets the game to its initial state."""
+        self.game = GameLogic()
+        self.update_grid()
 
     def update_grid(self):
         """Updates the GUI grid based on the game board state."""
