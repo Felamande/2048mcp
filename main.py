@@ -1,11 +1,21 @@
 import threading
 import tkinter as tk
+import os
 from gui import GameGUI
 from api import run_api, set_gui_update_callback, game_instance # Import game_instance to link GUI
 
 def main():
     # Create the Tkinter root window and GUI instance
     root = tk.Tk()
+    
+    # Set window icon
+    icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "2048_icon.ico")
+    if os.path.exists(icon_path):
+        try:
+            root.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Failed to set icon: {e}")
+    
     gui = GameGUI(master=root)
 
     # --- Crucial Link: Connect API changes to GUI ---

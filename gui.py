@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from game_logic import GameLogic
 import threading # To run the game logic updates separately
+import requests
 
 class GameGUI(tk.Frame):
     def __init__(self, master=None):
@@ -41,8 +42,16 @@ class GameGUI(tk.Frame):
 
     def reset_game(self):
         """Resets the game to its initial state."""
-        self.game = GameLogic()
-        self.update_grid()
+        try:
+            # Make an API call to reset the game
+            response = requests.post('http://127.0.0.1:5000/reset')
+            # The GUI will be updated through the callback mechanism
+            # No need to create a new GameLogic instance here
+        except Exception as e:
+            print(f"Error resetting game via API: {e}")
+            # Fallback to local reset if API call fails
+            self.game = GameLogic()
+            self.update_grid()
 
     def update_grid(self):
         """Updates the GUI grid based on the game board state."""
