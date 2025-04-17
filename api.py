@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
-from game_logic import GameLogic
 import threading
 import logging
+import game_manager
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -11,30 +11,18 @@ log.setLevel(logging.ERROR) # Reduce Flask's default logging noise
 app = Flask(__name__)
 
 # --- Game State Management ---
-# We need a single instance of the game shared between requests.
 # A lock is crucial to prevent race conditions when multiple requests
 # try to modify the game state simultaneously.
-game_instance = GameLogic()
 game_lock = threading.Lock()
-
-# --- GUI Update Callback ---
-# This function will be set by the main application (`main.py` later)
-# to allow the API to trigger GUI updates.
-gui_update_callback = None
 
 def set_gui_update_callback(callback):
     """Sets the function to call when the game state changes."""
-    global gui_update_callback
-    gui_update_callback = callback
+    game_manager.set_gui_update_callback(callback)
 
 def trigger_gui_update():
     """Calls the registered GUI update callback if it exists."""
-    if gui_update_callback:
-        try:
-            # Run callback in a separate thread to avoid blocking API response
-            threading.Thread(target=gui_update_callback, args=(game_instance.get_status(),)).start()
-        except Exception as e:
-            print(f"Error triggering GUI update: {e}") # Log error
+    # This is now handled by game_manager when setting/resetting instance
+    pass
 
 # --- API Endpoints ---
 
@@ -42,7 +30,7 @@ def trigger_gui_update():
 def get_status():
     """Returns the current game status."""
     with game_lock:
-        status = game_instance.get_status()
+        status = game_manager.get_instance().get_status()
     return jsonify(status)
 
 @app.route('/move/<direction>', methods=['POST'])
@@ -57,6 +45,7 @@ def move(direction):
     status_code = 200 # Default OK
 
     with game_lock:
+        game_instance = game_manager.get_instance()
         if game_instance.game_over:
             result_status = "fail"
             error_message = "Game is over"
@@ -66,21 +55,16 @@ def move(direction):
                 moved = game_instance.move(direction)
                 if moved:
                     result_status = "ok"
-                    # Trigger GUI update only if the move was successful and changed the board
-                    trigger_gui_update()
+                    # The GUI update is now triggered through game_manager
                 else:
                     # Check if the game is over *after* the move attempt
                     if game_instance.game_over:
                          result_status = "fail"
                          error_message = "Game over - no more moves possible"
                          status_code = 400 # Game ended
-                         # Trigger GUI update to show final state
-                         trigger_gui_update()
                     else:
                         result_status = "ok"
                         error_message = "but your move did not change the board"
-                        # This isn't strictly an error, but indicates no change
-                        # status_code = 200 or maybe 400 depending on desired API behavior
             except Exception as e:
                 result_status = "fail"
                 error_message = f"Internal server error: {str(e)}"
@@ -102,10 +86,8 @@ def move(direction):
 @app.route('/reset', methods=['POST'])
 def reset_game():
     """Resets the game to its initial state."""
-    global game_instance
     with game_lock:
-        game_instance = GameLogic() # Create a new game instance
-        trigger_gui_update() # Update GUI to show the new board
+        game_manager.reset_instance()
     return jsonify({"result": "ok", "message": "Game reset successfully"})
 
 @app.route('/try_move/<direction>', methods=['POST'])
@@ -116,6 +98,7 @@ def try_move(direction):
         return jsonify({"result": "fail", "error": "Invalid direction"}), 400
 
     with game_lock:
+        game_instance = game_manager.get_instance()
         # Use the try_move method to simulate the move without changing the game state
         result = game_instance.try_move(direction)
         
@@ -138,10 +121,6 @@ def try_move(direction):
     return jsonify(response)
 
 # --- Flask App Runner ---
-# Note: This part is typically run from a main script, not directly here
-# if integrating with a GUI in the same process.
-# We will create a main.py later.
-
 def run_api(host='127.0.0.1', port=5000):
     """Runs the Flask development server."""
     # Use threaded=True to handle multiple requests, especially important

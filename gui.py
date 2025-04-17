@@ -2,14 +2,14 @@ import tkinter as tk
 from tkinter import messagebox
 from game_logic import GameLogic
 import threading # To run the game logic updates separately
-import requests
+import game_manager
 
 class GameGUI(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.master.title('2048 Game')
-        self.game = GameLogic()
+        self.game = game_manager.get_instance()
         self.grid_cells = []
         self.init_grid()
         self.update_grid()
@@ -42,16 +42,8 @@ class GameGUI(tk.Frame):
 
     def reset_game(self):
         """Resets the game to its initial state."""
-        try:
-            # Make an API call to reset the game
-            response = requests.post('http://127.0.0.1:5000/reset')
-            # The GUI will be updated through the callback mechanism
-            # No need to create a new GameLogic instance here
-        except Exception as e:
-            print(f"Error resetting game via API: {e}")
-            # Fallback to local reset if API call fails
-            self.game = GameLogic()
-            self.update_grid()
+        game_manager.reset_instance()
+        # The GUI will be automatically updated through the callback mechanism
 
     def update_grid(self):
         """Updates the GUI grid based on the game board state."""
@@ -124,10 +116,6 @@ class GameGUI(tk.Frame):
         self.game.game_over = new_state['game_over']
         self.update_grid()
         if self.game.game_over:
-            # Check if game over message already shown to avoid duplicates
-            # This simple check might not be robust enough in complex scenarios
-            # A more robust way would be to track the state explicitly.
-            # For now, let's assume the API call causing game over will trigger this once.
             self.show_game_over()
 
 

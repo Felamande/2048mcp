@@ -2,7 +2,8 @@ import threading
 import tkinter as tk
 import os
 from gui import GameGUI
-from api import run_api, set_gui_update_callback, game_instance # Import game_instance to link GUI
+from api import run_api, set_gui_update_callback
+import game_manager
 
 def main():
     # Create the Tkinter root window and GUI instance
@@ -19,10 +20,7 @@ def main():
     gui = GameGUI(master=root)
 
     # --- Crucial Link: Connect API changes to GUI ---
-    # Pass the GUI's update method to the API module.
-    # We also need to ensure the GUI starts with the *same* game instance
-    # that the API is using.
-    gui.game = game_instance # Make GUI use the shared game instance from api.py
+    # Pass the GUI's update method to the API module via the game_manager
     set_gui_update_callback(gui.update_game_state)
 
     # Pack the GUI elements
@@ -40,7 +38,6 @@ def main():
     print("  POST /move/{up|down|left|right}")
     print("  POST /try_move/{up|down|left|right}")
     print("  POST /reset")
-
 
     # --- Start the Tkinter main loop (must be in the main thread) ---
     root.mainloop()
