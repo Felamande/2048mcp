@@ -89,7 +89,7 @@ def move(direction):
 
         # Get current game status to include in response
         current_status = game_instance.get_status()
-
+    print(f"<{direction}>: {current_status} {result_status} {error_message}")
     response = {
         "game_result": result_status,
         "current_status": current_status

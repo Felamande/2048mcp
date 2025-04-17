@@ -11,8 +11,9 @@ BASE_API = "http://127.0.0.1:5000"
 def move(direction:str)-> str:
     rsp = requests.post(f"{BASE_API}/move/{direction}")
     if rsp.status_code == 200:
-        jsonrsp['request_result'] = 200
-        return json.dumps(rsp.json())
+        jsonrsp = rsp.json()
+        jsonrsp['request_result'] = 'ok'
+        return json.dumps(jsonrsp)
     else:
         jsonrsp = rsp.json()
         jsonrsp['request_result'] = f"fail with http {rsp.status_code}"
@@ -44,7 +45,7 @@ def get_status() -> str:
     rsp = requests.get(f"{BASE_API}/status")
     if rsp.status_code == 200:
         jsonrsp = rsp.json()
-        jsonrsp['request_result'] = 200
+        jsonrsp['request_result'] = 'ok'
         return json.dumps(jsonrsp)
     else:
         jsonrsp = rsp.json()
@@ -54,10 +55,10 @@ def get_status() -> str:
 @mcp.tool()
 def reset_game() -> str:
     """reset 2048 game status"""
-    rsp = requests.get(f"{BASE_API}/reset")
+    rsp = requests.post(f"{BASE_API}/reset")
     if rsp.status_code == 200:
         jsonrsp = rsp.json()
-        jsonrsp['request_result'] = 200
+        jsonrsp['request_result'] = 'ok'
         return json.dumps(jsonrsp)
     else:
         jsonrsp = rsp.json()
