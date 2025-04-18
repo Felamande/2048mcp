@@ -43,7 +43,10 @@ class GameGUI(tk.Frame):
     def reset_game(self):
         """Resets the game to its initial state."""
         game_manager.reset_instance()
-        # The GUI will be automatically updated through the callback mechanism
+        # Update our reference to the new game instance
+        self.game = game_manager.get_instance()
+        # Update the GUI
+        self.update_grid()
 
     def update_grid(self):
         """Updates the GUI grid based on the game board state."""
